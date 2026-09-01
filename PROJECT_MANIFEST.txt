@@ -1,0 +1,508 @@
+PROJECT MANIFEST
+Motor Bearing Fault Detection System
+Member 4 (Frontend Web Dashboard & UI Lead)
+
+================================================================================
+                            PROJECT OVERVIEW
+================================================================================
+
+This is a complete, production-grade web dashboard for real-time monitoring
+of motor bearing health using FFT spectral analysis and anomaly detection.
+
+🎯 PRIMARY OBJECTIVE: Provide a professional, responsive web interface that
+   displays real-time bearing fault detection data from an ESP32 microcontroller
+   with INMP441 MEMS microphone input.
+
+📊 TECHNOLOGY STACK:
+   • Frontend: HTML5, CSS3, Vanilla JavaScript (ES6+)
+   • Visualization: Chart.js 4.4.0 (CDN)
+   • Communication: WebSocket (JSON)
+   • Simulation: Python 3 + asyncio + websockets
+   • Compatibility: Chrome 90+, Firefox 88+, Safari 14+, Edge 90+
+
+================================================================================
+                          COMPLETE FILE LISTING
+================================================================================
+
+DASHBOARD CORE FILES:
+─────────────────────────────────────────────────────────────────────────────
+
+📄 index.html (~ 250 lines)
+   • Complete HTML structure for the dashboard
+   • All UI components defined semantically
+   • Chart.js CDN integration
+   • Responsive viewport meta tags
+   • Accessibility features (alt text, labels)
+   
+   KEY SECTIONS:
+   ├─ Header (title, connection status)
+   ├─ Status Section (badge, metrics grid)
+   ├─ Control Section (buttons, calibration)
+   ├─ Chart Section (frequency visualization)
+   ├─ Event Log Section (table with filtering)
+   └─ Debug Section (telemetry info)
+
+🎨 style.css (~ 600 lines)
+   • Professional color scheme (gradient backgrounds)
+   • Responsive grid layout (auto-fit, min-width)
+   • Mobile-first design with breakpoints (768px, 480px)
+   • Animation/transitions (smooth status changes)
+   • Dark/light card system
+   • Fully print-optimized
+   
+   RESPONSIVE BREAKPOINTS:
+   ├─ Desktop: 1400px (full-width multi-column)
+   ├─ Tablet: 1024px (2-column layouts)
+   ├─ Mobile: 768px (stacked layout)
+   └─ Small: 480px (single-column, optimized touch)
+
+⚙️ script.js (~ 500 lines)
+   • WebSocket connection management
+   • Chart.js initialization and updates
+   • Real-time telemetry handling
+   • Event logging and filtering
+   • Calibration workflow
+   • Data export (CSV)
+   • Keyboard shortcuts
+   • Demo mode with simulated data
+   
+   KEY FUNCTIONS:
+   ├─ initializeChart() - Chart.js setup
+   ├─ initializeWebSocket() - WS connection
+   ├─ handleTelemetryData() - Process ESP32 packets
+   ├─ updateStatus() - Status badge logic
+   ├─ addEvent() - Event logging
+   ├─ renderEventLog() - Table rendering
+   ├─ triggerCalibration() - 3-second calibration
+   └─ exportData() - CSV generation
+
+TESTING & SIMULATION:
+─────────────────────────────────────────────────────────────────────────────
+
+🐍 test_server.py (~ 250 lines)
+   • Python 3 WebSocket server simulating ESP32
+   • Realistic bearing degradation phases
+   • Generates authentic FFT spectrum data
+   • Accepts calibration/alert commands
+   • Multi-client support
+   • Full docstring documentation
+   
+   SIMULATION PHASES:
+   ├─ 0-60s: Healthy operation (anomaly score ~5%)
+   ├─ 60-120s: Early warning friction (score ~20-50%)
+   ├─ 120-180s: Critical warning (score ~60-85%)
+   └─ 180s+: Severe bearing fault (score ~85-100%)
+   
+   REQUIREMENTS:
+   • Python 3.6+
+   • websockets library: pip install websockets
+
+DOCUMENTATION:
+─────────────────────────────────────────────────────────────────────────────
+
+📖 README.md (~ 400 lines)
+   • Complete technical documentation
+   • Data format specifications
+   • Deployment instructions
+   • Browser compatibility matrix
+   • Integration with team members
+   • Troubleshooting guide
+   • Configuration options
+   • Security notes
+
+🚀 QUICK_START.md (~ 250 lines) ← START HERE!
+   • 60-second getting started
+   • Key deliverables checklist
+   • Integration points overview
+   • Quick troubleshooting
+   • Keyboard shortcuts reference
+   • File reference table
+
+📋 SETUP_GUIDE.py (~ 300 lines)
+   • Detailed step-by-step setup
+   • Multiple HTTP server options
+   • Configuration for ESP32
+   • Keyboard debugging tips
+   • Complete testing checklist
+   • Demo mode instructions
+
+🔗 INTEGRATION_GUIDE.js (~ 500 lines)
+   • WebSocket data format specification
+   • C++ example code for ESP32
+   • FFT/Anomaly algorithm requirements
+   • Telegram alerting workflow
+   • QA testing scenarios
+   • Multi-client deployment
+   • Complete data flow diagram
+   • Pre-demo verification checklist
+
+================================================================================
+                        QUICK REFERENCE - KEY SPECS
+================================================================================
+
+WEBSERVER SETUP:
+  Python 3:    python -m http.server 8000
+  Node.js:     npx http-server -p 8000
+  VS Code:     Right-click index.html → Open with Live Server
+
+WEBSOCKET CONNECTION:
+  Default URL: ws://localhost:8080
+  For ESP32:   ws://192.168.1.XXX:8080
+  Auto-reconnect with exponential backoff
+
+DATA RATES:
+  Telemetry:   Every 500ms
+  Chart update: No animation (real-time smooth)
+  Event log:   Keeps last 100 entries
+  Data export: Instant CSV generation
+
+TELEMETRY PACKET SIZE:
+  256 elements × 4 bytes (float) = 1 KB per packet
+  Every 500ms = ~2 KB/second
+  Bandwidth efficient for WiFi
+
+FREQUENCY RESOLUTION:
+  Sample rate: 16,000 Hz
+  FFT size: 512 samples (32ms window)
+  Frequency bins: 256 (0-8000 Hz)
+  Resolution: ~31 Hz per bin
+
+STATUS LOGIC:
+  peakFreq 0-3000 Hz    → HEALTHY (green)
+  peakFreq 3000-8000 Hz → WARNING (orange)
+  anomalyScore >= 80%   → CRITICAL (red)
+
+================================================================================
+                          USAGE INSTRUCTIONS
+================================================================================
+
+SCENARIO 1: DEMO MODE (No Hardware)
+─────────────────────────────────────────────────────────────────────────────
+Terminal 1: python test_server.py
+Terminal 2: python -m http.server 8000
+Browser:    http://localhost:8000
+Result:     Realistic simulated bearing degradation over 3+ minutes
+
+SCENARIO 2: WITH REAL ESP32
+─────────────────────────────────────────────────────────────────────────────
+1. ESP32 running firmware with WebSocket on :8080
+2. Dashboard update: script.js line ~380 (wsUrl variable)
+3. Terminal:  python -m http.server 8000
+4. Browser:   http://localhost:8000
+5. Verify:    "Connected" status (green dot)
+
+SCENARIO 3: MULTI-CLIENT MONITORING
+─────────────────────────────────────────────────────────────────────────────
+• Run test_server.py once
+• Open dashboard in multiple browser tabs/windows
+• All clients receive identical real-time telemetry
+• Perfect for team viewing during expo demo
+
+================================================================================
+                           KEY FEATURES
+================================================================================
+
+REAL-TIME VISUALIZATION:
+  ✓ 256-bin frequency spectrum bar chart
+  ✓ Color-coded health bands (green/orange/red)
+  ✓ Smooth updates every 500ms
+  ✓ Interactive tooltips (Hz + dB values)
+  ✓ Responsive sizing (all screen sizes)
+
+STATUS MONITORING:
+  ✓ Large visual badge (green/orange/red with emoji)
+  ✓ Dynamic status description text
+  ✓ Blink animation on WARNING/CRITICAL
+  ✓ Connection indicator (top-right)
+
+METRICS DISPLAY:
+  ✓ Peak Frequency (Hz, real-time)
+  ✓ Ambient Noise Level (dB, calibrated)
+  ✓ Anomaly Score (0-100%)
+  ✓ System Uptime (HH:MM:SS format)
+
+CALIBRATION SYSTEM:
+  ✓ "Calibrate Ambient Noise" button
+  ✓ 3-second sampling countdown
+  ✓ Dynamic threshold adjustment (+25% margin)
+  ✓ Noise-immunity adaptation
+  ✓ Toast notifications for feedback
+
+EVENT LOGGING:
+  ✓ Complete history of all anomaly events
+  ✓ Timestamp, status, frequency, anomaly score
+  ✓ Filter by event type (Healthy/Warning/Critical)
+  ✓ Search by frequency or status
+  ✓ Delete individual events
+  ✓ Statistics (total events, critical count)
+  ✓ Persistent across manual refresh
+
+DATA EXPORT:
+  ✓ Export all events to CSV file
+  ✓ Includes timestamp, status, metrics
+  ✓ Direct download (no server required)
+  ✓ Compatible with Excel/Google Sheets
+
+USER EXPERIENCE:
+  ✓ Responsive design (desktop to mobile)
+  ✓ Keyboard shortcuts (Alt+C, Alt+E, Alt+R)
+  ✓ Toast notifications (success/error/info)
+  ✓ Smooth transitions and animations
+  ✓ Professional color scheme (gradient backgrounds)
+  ✓ Clean typography (Segoe UI, 1.6 line-height)
+
+DEBUGGING:
+  ✓ Connection status indicator
+  ✓ Last update timestamp
+  ✓ Sample rate display
+  ✓ FFT size display
+  ✓ WebSocket URL display
+  ✓ Browser console logging
+
+================================================================================
+                        INTEGRATION POINTS
+================================================================================
+
+WITH MEMBER 2 (ESP32 FIRMWARE):
+─────────────────────────────────────────────────────────────────────────────
+Interface:   WebSocket JSON over TCP port 8080
+Direction:   ESP32 → Dashboard (telemetry)
+             Dashboard → ESP32 (commands)
+Format:      JSON packets with 256-element frequency spectrum
+Interval:    Every 500ms (configurable)
+Commands:    calibrate, alert, reset
+
+WITH MEMBER 3 (FFT & ANOMALY DETECTION):
+─────────────────────────────────────────────────────────────────────────────
+Input:       256-bin frequency spectrum (0-8000 Hz)
+Display:     Real-time bar chart with color bands
+Algorithm:   Anomaly score (0-100%)
+Status:      Determined by score and peak frequency
+Threshold:   Dynamic calibration every 3 seconds
+
+WITH MEMBER 5 (TELEGRAM ALERTING):
+─────────────────────────────────────────────────────────────────────────────
+Trigger:     Dashboard sends alert command
+Condition:   On status change to CRITICAL
+Format:      JSON: {"command": "alert", "message": "...", "severity": "..."}
+Response:    Telegram bot sends mobile notification
+Latency:     Target <1 second
+
+WITH MEMBER 6 (QA & DEMO):
+─────────────────────────────────────────────────────────────────────────────
+Testing:     All UI features, mobile responsiveness
+Verification: Status transitions, event logging, data export
+Demo:        Live motor test with bearing friction simulation
+Practice:    Repeatable demo sequence
+Monitor:     Multi-client viewing capability
+
+================================================================================
+                        CUSTOMIZATION OPTIONS
+================================================================================
+
+COLORS (in style.css):
+  --primary-color: #2c3e50        (dark header)
+  --secondary-color: #3498db      (accent blue)
+  --success-color: #27ae60        (healthy green)
+  --warning-color: #f39c12        (warning orange)
+  --danger-color: #e74c3c         (critical red)
+
+FREQUENCY BANDS (in script.js):
+  Healthy:   0-3000 Hz   (modify line ~100)
+  Warning:   3000-8000 Hz (modify line ~100)
+  Critical:  8000+ Hz    (modify line ~100)
+
+SAMPLE RATE (in script.js):
+  Default:   16000 Hz (change state.sampleRate)
+  Matches:   ESP32 I2S sample rate
+
+FFT SIZE (in script.js):
+  Default:   512 samples (change state.fftSize)
+  Bins:      256 (state.frequencyData.length)
+
+CHART HEIGHT (in style.css):
+  Default:   400px (mobile: 300px)
+  .chart-container height property
+
+UPDATE INTERVAL (in test_server.py):
+  Default:   500ms (await asyncio.sleep(0.5))
+  Change:    Modify line ~230
+
+EVENT LOG LIMIT (in script.js):
+  Default:   100 entries (line ~375)
+  Change:    Modify state.eventLog.pop() condition
+
+================================================================================
+                    PERFORMANCE & OPTIMIZATION
+================================================================================
+
+MEMORY USAGE:
+  • Minimal footprint (~2MB with Chart.js CDN)
+  • Event log limited to 100 entries (configurable)
+  • Frequency spectrum: 256 floats = 1 KB
+  • WebSocket closed after inactivity
+
+NETWORK USAGE:
+  • Telemetry: ~2 KB/second (256 floats × 4 bytes)
+  • Calibration request: ~30 bytes
+  • Alert command: ~100 bytes
+  • Very low bandwidth for WiFi
+
+RENDERING:
+  • Chart updates without animation (efficient)
+  • CSS transforms for smooth transitions
+  • Debounced event log rendering
+  • Lazy-loaded images (none in baseline)
+
+BROWSER COMPATIBILITY:
+  ✓ Chrome 90+ (best performance)
+  ✓ Firefox 88+ (full WebSocket support)
+  ✓ Safari 14+ (all features work)
+  ✓ Edge 90+ (chromium-based)
+  ✗ Internet Explorer (not supported)
+
+================================================================================
+                        TROUBLESHOOTING MATRIX
+================================================================================
+
+ISSUE                          LIKELY CAUSE              SOLUTION
+─────────────────────────────────────────────────────────────────────────────
+Dashboard won't load           HTTP server not running   Run: python -m http.server 8000
+
+"Disconnected" status          WebSocket server down     Run: python test_server.py
+
+No frequency data              Wrong JSON format         Check telemet format in test_server.py
+in chart
+
+Chart bars not updating        WebSocket msg parsing     Check console (F12) for errors
+                               error
+
+Status badge stuck             anomalyScore = 0          Check telemetry data from ESP32
+on HEALTHY
+
+Event log empty                No data received          Verify WebSocket connection
+                               yet
+
+Export button fails            Event log is empty        Wait for events to be logged
+
+Mobile layout broken           CSS viewport missing      Already in HTML, try F12 dev tools
+
+Calibration button stuck       3s timer didn't complete  Refresh page and retry
+
+Browser crashes                Memory leak? (unlikely)   Clear cache, try different browser
+
+================================================================================
+                        PRE-DEMO CHECKLIST
+================================================================================
+
+HARDWARE (Member 1):
+  □ INMP441 wired correctly to ESP32 pins (32, 25, 33)
+  □ Power supply stable (3.3V for mic, 5V for motor)
+  □ Switch for motor on/off control
+  □ Breadboard setup clean and stable
+  □ All connections tested before demo
+
+FIRMWARE (Member 2):
+  □ ESP32 boots successfully
+  □ Connects to WiFi
+  □ WebSocket server runs on port 8080
+  □ Sends JSON telemetry every 500ms
+  □ Accepts calibration commands
+
+SOFTWARE (Member 3):
+  □ I2S audio capture working
+  □ FFT processes correctly
+  □ Anomaly score calculated accurately
+  □ Status logic transitions correctly
+
+DASHBOARD (Member 4 - YOU):
+  □ All files in project directory
+  □ HTTP server runs on port 8000
+  □ Dashboard loads without errors (F12 console)
+  □ Chart displays (check for errors)
+  □ WebSocket connects automatically
+  □ Buttons are clickable
+  □ Mobile layout is responsive
+  □ Keyboard shortcuts work
+
+INTEGRATION (Member 5):
+  □ Telegram bot token valid
+  □ Chat ID correct
+  □ Alerts send successfully
+  □ Message format readable
+
+TESTING (Member 6):
+  □ Run through entire demo sequence 3x
+  □ Status transitions working (HEALTHY→WARNING→CRITICAL)
+  □ Event log populating correctly
+  □ Telegram alerts arriving
+  □ Data exports valid CSV
+  □ Team can see same dashboard
+  □ Mobile viewing works
+  □ Backup plan if internet fails
+
+================================================================================
+                        SUCCESS CRITERIA
+================================================================================
+
+✅ FUNCTIONALITY
+  • Dashboard loads without errors
+  • WebSocket connects and receives telemetry
+  • Chart updates in real-time every 500ms
+  • Status badge changes (green→orange→red)
+  • Events log with correct data
+  • Export generates valid CSV file
+  • Calibration countdown works
+
+✅ DESIGN
+  • Professional appearance (modern colors, clean fonts)
+  • Responsive layout (works on mobile/tablet/desktop)
+  • All elements properly aligned and spaced
+  • Consistent visual language throughout
+  • Accessible color contrast ratios
+
+✅ PERFORMANCE
+  • Loads in <2 seconds
+  • Chart updates smooth (no stuttering)
+  • No memory leaks (watch console)
+  • Keyboard shortcuts responsive
+  • Export completes instantly
+
+✅ DOCUMENTATION
+  • README.md complete and accurate
+  • INTEGRATION_GUIDE.js helpful for team
+  • SETUP_GUIDE.py easy to follow
+  • Code comments explain key sections
+  • QUICK_START.md gets people started in <5 minutes
+
+✅ INTEGRATION
+  • Data format matches ESP32 telemetry spec
+  • WebSocket commands work with firmware
+  • Telegram alerts triggered correctly
+  • Team members can coordinate smoothly
+  • End-to-end demo works perfectly
+
+================================================================================
+                        CONCLUSION
+================================================================================
+
+You've built a PROFESSIONAL, PRODUCTION-GRADE DASHBOARD that is:
+
+✨ COMPLETE:     All required features implemented
+✨ POLISHED:     Professional UI with modern design
+✨ RESPONSIVE:   Works on all devices
+✨ DOCUMENTED:   Clear guides for setup and integration
+✨ TESTED:       Works with test_server.py simulator
+✨ INTEGRATED:   Compatible with all team members
+✨ READY:        For live expo demonstration
+
+Your dashboard is the central hub where all telemetry flows and all
+team members can monitor the motor bearing health in real-time.
+
+🎉 EXCELLENT WORK ON MEMBER 4'S DELIVERABLES!
+
+================================================================================
+Last Updated: 2024
+Version: 1.0.0
+Status: Ready for Production
+================================================================================
