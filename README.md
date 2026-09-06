@@ -41,11 +41,21 @@ Then open your browser to `http://localhost:8000`
 
 ### 2. ESP32 WebSocket Connection
 
-The dashboard expects the ESP32 to run a WebSocket server on port 8080. Update the connection URL in `script.js` if needed:
+The dashboard expects the ESP32 to run a WebSocket server on port 8080. The integrated firmware is in [ESP32_Acoustic_Monitor.ino](ESP32_Acoustic_Monitor.ino).
+
+Install these Arduino libraries before uploading the sketch:
+
+- `arduinoFFT`
+- `WebSockets` by Markus Sattler / Links2004
+- `ArduinoJson`
+
+After uploading, copy the ESP32 IP address from Serial Monitor and open the dashboard with that address:
 
 ```javascript
-const wsUrl = `ws://${window.location.hostname || 'localhost'}:8080`;
+http://localhost:8000/?esp32=192.168.1.100
 ```
+
+The ESP32 and the computer running the dashboard must be on the same Wi-Fi network. The sketch sends 256 FFT bins every 500 ms and accepts the dashboard's calibration command.
 
 ## 📡 Data Format
 
@@ -297,5 +307,6 @@ Project/
 **Dashboard Version:** 1.0.0  
 **Last Updated:** 2024  
 **Team:** Bearing Fault Detection Project
-#   M o t o r - B e a r i n g - F a u l t - D e t e c t i o n  
+#   M o t o r - B e a r i n g - F a u l t - D e t e c t i o n 
+ 
  

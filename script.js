@@ -147,8 +147,21 @@ function generateFrequencyLabels(bins) {
    ============================================ */
 
 function initializeWebSocket() {
-    // Try to connect to WebSocket server
-    const wsUrl = `ws://${window.location.hostname || 'localhost'}:8080`;
+    // Use ?esp32=192.168.1.100 when the dashboard is served locally.
+    const configuredHost = new URLSearchParams(window.location.search).get('esp32');
+    const localHosts = ['', 'localhost', '127.0.0.1', '::1'];
+    const esp32Host = configuredHost || (!localHosts.includes(window.location.hostname)
+        ? window.location.hostname
+        : '');
+
+    if (!esp32Host) {
+        document.getElementById('wsUrl').textContent = 'ESP32 address not configured';
+        updateConnectionStatus(false);
+        console.log('ESP32 address not configured. Use ?esp32=ESP32_IP_ADDRESS.');
+        return;
+    }
+
+    const wsUrl = `ws://${esp32Host}:8080`;
     document.getElementById('wsUrl').textContent = wsUrl;
     
     try {
@@ -185,8 +198,7 @@ function initializeWebSocket() {
     } catch (e) {
         console.error('Failed to create WebSocket:', e);
         updateConnectionStatus(false);
-        // Fall back to polling mode
-        startPollingMode();
+        showToast('Unable to connect to ESP32. Check the WebSocket URL.', 'error');
     }
 }
 
@@ -199,12 +211,6 @@ function attemptReconnect() {
     } else {
         showToast('Failed to connect. Check if ESP32 is running.', 'error');
     }
-}
-
-function startPollingMode() {
-    // Fallback: simulate data for demo purposes
-    console.log('Starting demo mode with simulated data...');
-    setInterval(simulateTelemtryData, 1000);
 }
 
 /* ============================================
@@ -263,43 +269,6 @@ function handleTelemetryData(data) {
     
     // Update last update time
     document.getElementById('lastUpdate').textContent = new Date().toLocaleTimeString();
-}
-
-function simulateTelemtryData() {
-    // Demo mode: Generate realistic simulated data
-    const baseFreq = 1500;
-    const variation = Math.sin(Date.now() / 2000) * 500;
-    const noise = (Math.random() - 0.5) * 200;
-    const peakFreq = baseFreq + variation + noise;
-    
-    // Generate frequency spectrum
-    const spectrum = new Array(256);
-    for (let i = 0; i < 256; i++) {
-        const freq = (i / 256) * 8000;
-        const centerFreq = peakFreq;
-        const spread = Math.exp(-Math.pow((freq - centerFreq) / 1000, 2));
-        const baseNoise = Math.random() * 20;
-        spectrum[i] = baseNoise + spread * 80;
-    }
-    
-    // Determine status based on peak frequency
-    let status = 'HEALTHY';
-    let anomalyScore = 0;
-    if (peakFreq > 3000 && peakFreq < 8000) {
-        status = 'WARNING';
-        anomalyScore = ((peakFreq - 3000) / 5000) * 50;
-    } else if (peakFreq >= 8000) {
-        status = 'CRITICAL';
-        anomalyScore = 100;
-    }
-    
-    handleTelemetryData({
-        peakFreq: peakFreq,
-        frequencySpectrum: spectrum,
-        anomalyScore: anomalyScore,
-        status: status,
-        noiseFloor: 30 + Math.random() * 10
-    });
 }
 
 /* ============================================
@@ -574,13 +543,6 @@ document.getElementById('filterLevel').addEventListener('change', renderEventLog
 // Sample Rate and FFT Size debug info
 document.getElementById('sampleRate').textContent = `${state.sampleRate}`;
 document.getElementById('fftSize').textContent = `${state.fftSize}`;
-
-/* ============================================
-   DEMO MODE TRIGGER
-   ============================================ */
-
-// Uncomment to start demo mode immediately
-// startPollingMode();
 
 console.log('Dashboard initialized. Waiting for ESP32 connection...');
 console.log('Keyboard shortcuts: Alt+C (Calibrate), Alt+E (Export), Alt+R (Reset Log)');

@@ -110,13 +110,12 @@ Perfect for validating all UI features before real hardware arrives!
 
 ## 🔧 CONNECTING TO REAL ESP32
 
-1. Find ESP32's IP on your network (e.g., `192.168.1.100`)
-2. Edit **script.js** line ~380:
-   ```javascript
-   const wsUrl = `ws://192.168.1.100:8080`;
-   ```
-3. Reload dashboard
-4. Should show "Connected" (green dot)
+1. Open `ESP32_Acoustic_Monitor.ino` in Arduino IDE.
+2. Install `arduinoFFT`, `WebSockets`, and `ArduinoJson` from Library Manager.
+3. Set `ssid` and `password`, then select an ESP32 board and upload.
+4. Copy the ESP32 IP from Serial Monitor (for example, `192.168.1.100`).
+5. Open `http://localhost:8000/?esp32=192.168.1.100`.
+6. The dashboard should show "Connected" (green dot).
 
 ---
 
